@@ -1,6 +1,6 @@
 {
   "summary": {
-    "scanned_files": 3,
+    "scanned_files": 5,
     "secrets_found": 0,
     "vulns_found": 0,
     "config_issues": 1
@@ -10,7 +10,7 @@
       "category": "Security Headers",
       "title": "Missing Content-Security-Policy (CSP) meta tag in HTML",
       "severity": "MEDIUM",
-      "file": "index.html",
+      "file": "politica-privacidade.html",
       "line": null,
       "snippet": null,
       "recommendation": "Add a strict CSP meta tag in <head> to prevent unauthorized script execution and XSS attacks."

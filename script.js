@@ -175,4 +175,32 @@ document.addEventListener('DOMContentLoaded', () => {
         animElements.forEach(element => element.classList.add('visible'));
     }
 
+    /* ==========================================================================
+       6. COOKIE CONSENT BANNER LOGIC
+       ========================================================================== */
+    const cookieBanner = document.getElementById('cookie-banner');
+    const cookieAccept = document.getElementById('cookie-accept');
+    const cookieReject = document.getElementById('cookie-reject');
+
+    if (cookieBanner && cookieAccept && cookieReject) {
+        const consent = localStorage.getItem('cookieConsent');
+        
+        // Exibe o banner após 1.5s se ainda não houver aceite
+        if (!consent) {
+            setTimeout(() => {
+                cookieBanner.classList.add('active');
+            }, 1500);
+        }
+
+        cookieAccept.addEventListener('click', () => {
+            localStorage.setItem('cookieConsent', 'accepted');
+            cookieBanner.classList.remove('active');
+        });
+
+        cookieReject.addEventListener('click', () => {
+            localStorage.setItem('cookieConsent', 'rejected');
+            cookieBanner.classList.remove('active');
+        });
+    }
+
 });
