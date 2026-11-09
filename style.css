@@ -48,6 +48,11 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
+img {
+    max-width: 100%;
+    height: auto;
+}
+
 /* Containers */
 .container {
     width: 100%;
@@ -557,6 +562,8 @@ p {
     top: 0;
     left: 0;
     width: 65%;
+    height: auto;
+    max-height: 420px;
     object-fit: cover;
     object-position: top;
     aspect-ratio: 3 / 4;
@@ -569,6 +576,8 @@ p {
     bottom: 0;
     right: 0;
     width: 48%;
+    height: auto;
+    max-height: 330px;
     object-fit: cover;
     object-position: top;
     aspect-ratio: 3 / 4;
