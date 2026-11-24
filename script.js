@@ -176,17 +176,41 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /* ==========================================================================
-       6. COOKIE CONSENT BANNER LOGIC
+       6. COOKIE CONSENT BANNER & STANDARD ANALYTICS EVENTS (NO PII)
        ========================================================================== */
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+        window.dataLayer.push(arguments);
+    }
+
+    const updateConsentMode = (granted) => {
+        const state = granted ? 'granted' : 'denied';
+        gtag('consent', 'update', {
+            ad_storage: state,
+            ad_user_data: state,
+            ad_personalization: state,
+            analytics_storage: state
+        });
+    };
+
+    const storedConsent = localStorage.getItem('cookieConsent');
+    gtag('consent', 'default', {
+        ad_storage: storedConsent === 'accepted' ? 'granted' : 'denied',
+        ad_user_data: storedConsent === 'accepted' ? 'granted' : 'denied',
+        ad_personalization: storedConsent === 'accepted' ? 'granted' : 'denied',
+        analytics_storage: storedConsent === 'accepted' ? 'granted' : 'denied'
+    });
+
+    const pushSiteEvent = (eventName, params = {}) => {
+        window.dataLayer.push({ event: eventName, ...params });
+    };
+
     const cookieBanner = document.getElementById('cookie-banner');
     const cookieAccept = document.getElementById('cookie-accept');
     const cookieReject = document.getElementById('cookie-reject');
 
     if (cookieBanner && cookieAccept && cookieReject) {
-        const consent = localStorage.getItem('cookieConsent');
-        
-        // Exibe o banner após 1.5s se ainda não houver aceite
-        if (!consent) {
+        if (!storedConsent) {
             setTimeout(() => {
                 cookieBanner.classList.add('active');
             }, 1500);
@@ -194,13 +218,43 @@ document.addEventListener('DOMContentLoaded', () => {
 
         cookieAccept.addEventListener('click', () => {
             localStorage.setItem('cookieConsent', 'accepted');
+            updateConsentMode(true);
             cookieBanner.classList.remove('active');
         });
 
         cookieReject.addEventListener('click', () => {
             localStorage.setItem('cookieConsent', 'rejected');
+            updateConsentMode(false);
             cookieBanner.classList.remove('active');
         });
     }
+
+    document.querySelectorAll('a[href]').forEach((link) => {
+        const href = link.getAttribute('href') || '';
+        if (href.includes('contato_whatsapp.html') || href.includes('wa.me/')) {
+            link.addEventListener('click', () => {
+                pushSiteEvent('whatsapp_click', { link_target: href });
+                pushSiteEvent('cta_click', { cta_type: 'whatsapp' });
+            });
+        } else if (href.startsWith('tel:')) {
+            link.addEventListener('click', () => {
+                pushSiteEvent('phone_click');
+            });
+        } else if (href.startsWith('http') && !href.includes('mmiranda.odo.br')) {
+            link.addEventListener('click', () => {
+                pushSiteEvent('outbound_click', { link_url: href });
+            });
+        }
+    });
+
+    let scroll75Sent = false;
+    window.addEventListener('scroll', () => {
+        if (scroll75Sent) return;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        if (docHeight > 0 && (window.scrollY / docHeight) >= 0.75) {
+            scroll75Sent = true;
+            pushSiteEvent('scroll_75');
+        }
+    }, { passive: true });
 
 });
