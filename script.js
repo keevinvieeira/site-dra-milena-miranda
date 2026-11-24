@@ -176,12 +176,34 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /* ==========================================================================
-       6. COOKIE CONSENT BANNER & STANDARD ANALYTICS EVENTS (NO PII)
+       6. COOKIE CONSENT BANNER, UTM CAPTURE & STANDARD EVENTS (NO PII)
        ========================================================================== */
     window.dataLayer = window.dataLayer || [];
     function gtag() {
         window.dataLayer.push(arguments);
     }
+
+    const UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];
+    const readUtms = () => {
+        const params = new URLSearchParams(window.location.search);
+        const fromUrl = {};
+        UTM_KEYS.forEach((key) => {
+            const val = params.get(key);
+            if (val) fromUrl[key] = val.slice(0, 100);
+        });
+        if (Object.keys(fromUrl).length > 0) {
+            try { sessionStorage.setItem('siteUtms', JSON.stringify(fromUrl)); } catch (e) {}
+            return fromUrl;
+        }
+        try {
+            const saved = sessionStorage.getItem('siteUtms');
+            return saved ? JSON.parse(saved) : {};
+        } catch (e) {
+            return {};
+        }
+    };
+
+    const activeUtms = readUtms();
 
     const updateConsentMode = (granted) => {
         const state = granted ? 'granted' : 'denied';
@@ -194,15 +216,8 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const storedConsent = localStorage.getItem('cookieConsent');
-    gtag('consent', 'default', {
-        ad_storage: storedConsent === 'accepted' ? 'granted' : 'denied',
-        ad_user_data: storedConsent === 'accepted' ? 'granted' : 'denied',
-        ad_personalization: storedConsent === 'accepted' ? 'granted' : 'denied',
-        analytics_storage: storedConsent === 'accepted' ? 'granted' : 'denied'
-    });
-
-    const pushSiteEvent = (eventName, params = {}) => {
-        window.dataLayer.push({ event: eventName, ...params });
+    const pushSiteEvent = (eventName) => {
+        window.dataLayer.push({ event: eventName, ...activeUtms });
     };
 
     const cookieBanner = document.getElementById('cookie-banner');
@@ -229,12 +244,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    const utmQuery = new URLSearchParams(activeUtms).toString();
     document.querySelectorAll('a[href]').forEach((link) => {
         const href = link.getAttribute('href') || '';
         if (href.includes('contato_whatsapp.html') || href.includes('wa.me/')) {
+            if (utmQuery && href.includes('contato_whatsapp.html') && !href.includes('?')) {
+                link.setAttribute('href', `${href}?${utmQuery}`);
+            }
             link.addEventListener('click', () => {
-                pushSiteEvent('whatsapp_click', { link_target: href });
-                pushSiteEvent('cta_click', { cta_type: 'whatsapp' });
+                pushSiteEvent('whatsapp_click');
+                pushSiteEvent('cta_click');
             });
         } else if (href.startsWith('tel:')) {
             link.addEventListener('click', () => {
@@ -242,7 +261,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         } else if (href.startsWith('http') && !href.includes('mmiranda.odo.br')) {
             link.addEventListener('click', () => {
-                pushSiteEvent('outbound_click', { link_url: href });
+                pushSiteEvent('outbound_click');
             });
         }
     });
