@@ -368,23 +368,36 @@ document.addEventListener('DOMContentLoaded', () => {
             utm_medium: activeUtms.utm_medium || null,
             utm_campaign: activeUtms.utm_campaign || null,
             referer: referer,
-            website: form.website.value
+            website: form.website.value,
+            event_id: (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : ('lead-' + Date.now() + '-' + Math.random().toString(36).slice(2, 10))
         };
         let saved = false;
+        const ctrl = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+        const timer = setTimeout(() => { if (ctrl) ctrl.abort(); }, 4000);
         try {
             const res = await fetch('/api/lead', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload),
-                credentials: 'same-origin'
+                credentials: 'same-origin',
+                signal: ctrl ? ctrl.signal : undefined
             });
             saved = res.ok;
         } catch (x) {
             saved = false;
         }
+        clearTimeout(timer);
         if (saved) {
             // Evento sem dado pessoal, só depois de o CRM confirmar o recebimento.
             window.dataLayer.push({ event: 'generate_lead', lead_source: 'site_whatsapp', lead_subject: assunto, ...activeUtms });
+        } else {
+            // Falha segura: reenvio em segundo plano (mesmo event_id = sem duplicar) e contagem agregada, sem dado pessoal.
+            try {
+                if (navigator.sendBeacon) {
+                    navigator.sendBeacon('/api/lead', new Blob([JSON.stringify(payload)], { type: 'application/json' }));
+                }
+            } catch (x) {}
+            window.dataLayer.push({ event: 'lead_save_failed', lead_source: 'site_whatsapp', ...activeUtms });
         }
         const text = 'Olá, Dra. Milena! Sou ' + nome + ' e gostaria de ' + frase + '.';
         // Mesmo se o CRM estiver fora do ar, o paciente não fica sem atendimento.

@@ -81,7 +81,9 @@ const REDIRECTS = {
 
 // ---------------------------------------------------------------------------
 // /api/lead: recebe o formulário do botão de WhatsApp e repassa ao CRM da clínica.
-// Segredos (Worker secrets): CRM_LEAD_URL, CRM_LEAD_TOKEN, CRM_LEAD_AUTH_HEADER (opcional, padrão Authorization).
+// Contrato: Shared/sites/CONTRATO_LEADS_SITE_MILENA.md. Secrets do Worker: CRM_LEADS_TOKEN, CF_ACCESS_CLIENT_ID,
+// CF_ACCESS_CLIENT_SECRET. Opcionais: CRM_LEAD_URL (padrão abaixo), CRM_LEAD_TEST ("1" marca teste:true, só em preview).
+const CRM_DEFAULT_URL = "https://crm.mmiranda.odo.br/v1/leads/from-site";
 // Nenhum dado pessoal é registrado em log.
 // ---------------------------------------------------------------------------
 const JSON_HEADERS = { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store" };
@@ -116,7 +118,10 @@ async function handleLead(request, env, url) {
   const telefone = normalizePhone(b && b.telefone);
   if (!nome || nome.length < 2) return reply(422, { ok: false, error: "nome_invalido" });
   if (!telefone) return reply(422, { ok: false, error: "telefone_invalido" });
-  if (!env.CRM_LEAD_URL) return reply(503, { ok: false, error: "crm_nao_configurado" });
+  if (!env.CRM_LEADS_TOKEN || !env.CF_ACCESS_CLIENT_ID || !env.CF_ACCESS_CLIENT_SECRET) {
+    return reply(503, { ok: false, error: "crm_nao_configurado" });
+  }
+  const eventId = typeof b.event_id === "string" && /^[A-Za-z0-9_.:-]{8,80}$/.test(b.event_id) ? b.event_id : crypto.randomUUID();
 
   const lead = {
     nome,
@@ -128,16 +133,22 @@ async function handleLead(request, env, url) {
     utm_campaign: clean(b.utm_campaign, 100),
     referer: clean(b.referer, 300),
     criado_em: new Date().toISOString(),
-    origem: "site_mmiranda"
+    origem: "site_mmiranda",
+    event_id: eventId
   };
-  const headers = { "Content-Type": "application/json" };
-  if (env.CRM_LEAD_TOKEN) headers[env.CRM_LEAD_AUTH_HEADER || "Authorization"] = env.CRM_LEAD_TOKEN;
+  if (env.CRM_LEAD_TEST === "1") lead.teste = true;
+  const headers = {
+    "Content-Type": "application/json",
+    "Authorization": "Bearer " + env.CRM_LEADS_TOKEN,
+    "CF-Access-Client-Id": env.CF_ACCESS_CLIENT_ID,
+    "CF-Access-Client-Secret": env.CF_ACCESS_CLIENT_SECRET
+  };
   try {
-    const r = await fetch(env.CRM_LEAD_URL, {
+    const r = await fetch(env.CRM_LEAD_URL || CRM_DEFAULT_URL, {
       method: "POST",
       headers,
       body: JSON.stringify(lead),
-      signal: AbortSignal.timeout(6000)
+      signal: AbortSignal.timeout(3000)
     });
     if (!r.ok) { console.log("crm_status", r.status); return reply(502, { ok: false, error: "crm_recusou" }); }
     return reply(200, { ok: true });
