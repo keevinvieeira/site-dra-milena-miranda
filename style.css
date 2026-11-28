@@ -1326,3 +1326,183 @@ a.contact-text:hover {
         text-align: center;
     }
 }
+
+/* ==========================================================================
+   INTERNAL PAGES & SEO SUBPAGES
+   ========================================================================== */
+.page-hero {
+    padding: 150px 0 60px;
+    background: radial-gradient(circle at 80% 20%, #FAF6EE 0%, var(--bg-primary) 70%);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.breadcrumb-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--text-light);
+    margin-bottom: 1.5rem;
+}
+
+.breadcrumb-bar a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: var(--transition-smooth);
+}
+
+.breadcrumb-bar a:hover {
+    color: var(--color-gold);
+}
+
+.page-hero-title {
+    font-size: 3.1rem;
+    line-height: 1.15;
+    color: var(--text-primary);
+    margin-bottom: 1.25rem;
+    max-width: 820px;
+}
+
+.page-hero-subtitle {
+    font-size: 1.08rem;
+    line-height: 1.8;
+    color: var(--text-secondary);
+    max-width: 720px;
+    margin-bottom: 2rem;
+}
+
+.page-content-section {
+    padding: 5.5rem 0;
+    background-color: var(--bg-primary);
+}
+
+.page-content-section.alt-bg {
+    background-color: var(--bg-secondary);
+}
+
+.card-more-link {
+    display: inline-block;
+    margin-top: auto;
+    padding-top: 1.4rem;
+    font-size: 0.78rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-gold);
+    text-decoration: none;
+    transition: var(--transition-smooth);
+}
+
+.card-more-link:hover {
+    color: var(--color-gold-hover);
+    transform: translateX(4px);
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    margin-top: 2.5rem;
+}
+
+.info-box {
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    padding: 2.2rem;
+}
+
+.info-box h2,
+.info-box h3 {
+    font-size: 1.5rem;
+    color: var(--text-primary);
+    margin-bottom: 0.8rem;
+}
+
+.info-box p,
+.info-box li {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    line-height: 1.75;
+}
+
+.info-box ul {
+    margin-left: 1.25rem;
+    margin-top: 0.75rem;
+}
+
+.faq-section {
+    padding: 5.5rem 0;
+    background-color: var(--bg-secondary);
+}
+
+.faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    margin-top: 2.5rem;
+}
+
+.faq-item {
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    padding: 1.8rem 2rem;
+}
+
+.faq-item h3 {
+    font-size: 1.35rem;
+    color: var(--text-primary);
+    margin-bottom: 0.7rem;
+}
+
+.faq-item p {
+    font-size: 0.95rem;
+    line-height: 1.75;
+    color: var(--text-secondary);
+}
+
+.ethical-notice {
+    margin-top: 3rem;
+    padding: 1.5rem 1.8rem;
+    background-color: var(--bg-secondary);
+    border-left: 2px solid var(--color-gold);
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+}
+
+.internal-cta-box {
+    margin-top: 3.5rem;
+    padding: 2.8rem;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+}
+
+.internal-cta-box h2 {
+    font-size: 2rem;
+    color: var(--text-primary);
+    margin-bottom: 0.4rem;
+}
+
+@media (max-width: 768px) {
+    .page-hero {
+        padding: 130px 0 45px;
+    }
+
+    .page-hero-title {
+        font-size: 2.3rem;
+    }
+
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .internal-cta-box {
+        padding: 2rem 1.5rem;
+    }
+}

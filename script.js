@@ -23,30 +23,34 @@ document.addEventListener('DOMContentLoaded', () => {
     const mobileMenu = document.querySelector('.mobile-menu');
     const mobileLinks = document.querySelectorAll('.mobile-link');
     
-    const toggleMenu = () => {
-        mobileMenu.classList.toggle('active');
-        menuToggle.classList.toggle('open');
-        
-        // Animating hamburger bars
-        const bars = menuToggle.querySelectorAll('.bar');
-        if (mobileMenu.classList.contains('active')) {
-            bars[0].style.transform = 'rotate(45deg) translate(6px, 5deg)';
-            bars[1].style.transform = 'rotate(-45deg) translate(6px, -5deg)';
-        } else {
-            bars[0].style.transform = 'none';
-            bars[1].style.transform = 'none';
-        }
-    };
+    if (menuToggle && mobileMenu) {
+        const toggleMenu = () => {
+            mobileMenu.classList.toggle('active');
+            menuToggle.classList.toggle('open');
 
-    menuToggle.addEventListener('click', toggleMenu);
-
-    mobileLinks.forEach(link => {
-        link.addEventListener('click', () => {
-            if (mobileMenu.classList.contains('active')) {
-                toggleMenu();
+            // Animating hamburger bars
+            const bars = menuToggle.querySelectorAll('.bar');
+            if (bars.length >= 2) {
+                if (mobileMenu.classList.contains('active')) {
+                    bars[0].style.transform = 'rotate(45deg) translate(6px, 5deg)';
+                    bars[1].style.transform = 'rotate(-45deg) translate(6px, -5deg)';
+                } else {
+                    bars[0].style.transform = 'none';
+                    bars[1].style.transform = 'none';
+                }
             }
+        };
+
+        menuToggle.addEventListener('click', toggleMenu);
+
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                if (mobileMenu.classList.contains('active')) {
+                    toggleMenu();
+                }
+            });
         });
-    });
+    }
 
     /* ==========================================================================
        3. BEFORE & AFTER INTERACTIVE SLIDER
@@ -247,8 +251,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const utmQuery = new URLSearchParams(activeUtms).toString();
     document.querySelectorAll('a[href]').forEach((link) => {
         const href = link.getAttribute('href') || '';
-        if (href.includes('contato_whatsapp.html') || href.includes('wa.me/')) {
-            if (utmQuery && href.includes('contato_whatsapp.html') && !href.includes('?')) {
+        const isWhatsappRoute =
+            href.includes('agendar-consulta-odontologica-whatsapp-curitiba') ||
+            href.includes('contato_whatsapp') ||
+            href.includes('wa.me/');
+        if (isWhatsappRoute) {
+            if (
+                utmQuery &&
+                (href.includes('agendar-consulta-odontologica-whatsapp-curitiba') || href.includes('contato_whatsapp')) &&
+                !href.includes('?')
+            ) {
                 link.setAttribute('href', `${href}?${utmQuery}`);
             }
             link.addEventListener('click', () => {

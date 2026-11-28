@@ -1,27 +1,31 @@
 # Dra. Milena Miranda — Odontologia
 
-> Consultório odontológico da Dra. Milena Miranda (CRO-PR 27743) em Curitiba/PR, no bairro Jardim das Américas. Atendimento particular e convênio MetLife, com valores definidos após avaliação clínica presencial.
+> Consultório odontológico da Dra. Milena Miranda (CRO-PR 27743) em Curitiba/PR, no bairro Jardim das Américas. Atendimento particular e convênio MetLife, com plano de tratamento e valores definidos após avaliação clínica presencial.
 
 ## Informações do Consultório
 
 - **Profissional responsável:** Dra. Milena Miranda (CRO-PR 27743)
 - **Endereço:** Rua Professor João Doetzer, 334, sala 03, 2º andar — Jardim das Américas, Curitiba/PR, CEP 81540-190
-- **Telefone / WhatsApp:** +55 (41) 9751-7055
+- **Telefone / WhatsApp:** +55 (41) 99751-7055
 - **Instagram:** [@dra.mmiranda](https://www.instagram.com/dra.mmiranda/)
 
-## Serviços Realizados
+## Serviços Realizados (sujeitos a avaliação clínica presencial)
 
 - Consulta e avaliação odontológica (30 minutos)
-- Clareamento dental e microabrasão
-- Restauração em resina
-- Coroas (cerâmica, cerômero e provisória), pino/coroa e aumento de coroa
+- Coroas dentárias (cerâmica, cerômero e provisória), pino e núcleo, e aumento de coroa clínica
+- Restauração em resina, clareamento dental e microabrasão
 - Profilaxia / limpeza (adulta e infantil) e raspagem periodontal
-- Tratamento de canal (endodontia)
-- Extrações dentárias e remoção de siso
-- Gengivoplastia e placas oclusais (acetato, acrílica e acrílica com silicone)
-- Contenção e reparo odontológico
+- Tratamento de canal (endodontia), extrações dentárias e remoção de siso
+- Gengivoplastia, contenção ortodôntica e placas oclusais (acetato, acrílica e acrílica com silicone)
+- Procedimentos estéticos faciais odontológicos indicados em avaliação presencial
 
 ## Páginas Principais
 
-- [Página Inicial](https://mmiranda.odo.br/): Apresentação do consultório, formação da Dra. Milena Miranda, canais de contato e agendamento.
-- [Política de Privacidade e Termos de Uso](https://mmiranda.odo.br/politica-privacidade.html): Informações sobre LGPD, medição de audiência e termos informativos do site.
+- [Página Inicial](https://mmiranda.odo.br/): Apresentação do consultório no Jardim das Américas em Curitiba, manifesto e canais de agendamento.
+- [Coroa Dentária e Reabilitação Oral em Curitiba](https://mmiranda.odo.br/coroa-dentaria-e-reabilitacao-oral-curitiba): Informações sobre coroa em cerâmica, cerômero, provisória, pino/coroa e reabilitação oral.
+- [Oclusão e Função Oral em Curitiba](https://mmiranda.odo.br/oclusao-e-funcao-oral-curitiba): Cuidados com equilíbrio mastigatório, proteção dentária e placas oclusais.
+- [Harmonização Facial Odontológica em Curitiba](https://mmiranda.odo.br/harmonizacao-facial-odontologica-curitiba): Abordagem odontológica para equilíbrio facial após avaliação presencial.
+- [Saúde Bucal Integrativa e Prevenção em Curitiba](https://mmiranda.odo.br/saude-bucal-integrativa-e-prevencao-curitiba): Prevenção, profilaxia, periodontia, restaurações, endodontia e cirurgias.
+- [Sobre a Dra. Milena Miranda (CRO-PR 27743)](https://mmiranda.odo.br/dentista-jardim-das-americas-curitiba-dra-milena-miranda): Formação, filosofia clínica e atendimento particular e MetLife no Jardim das Américas.
+- [Contato e Localização em Curitiba](https://mmiranda.odo.br/consulta-odontologica-jardim-das-americas-curitiba-contato): Endereço, mapa, horários e agendamento de consulta diagnóstica.
+- [Política de Privacidade LGPD e Termos de Uso](https://mmiranda.odo.br/politica-de-privacidade-lgpd): Informações sobre proteção de dados, cookies e termos informativos do site.
