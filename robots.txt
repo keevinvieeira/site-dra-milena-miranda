@@ -44,6 +44,7 @@ User-agent: *
 Disallow: /painel
 Disallow: /crm
 Disallow: /admin
+Disallow: /api/
 Allow: /
 
 Sitemap: https://mmiranda.odo.br/sitemap.xml

@@ -1506,3 +1506,32 @@ a.contact-text:hover {
         padding: 2rem 1.5rem;
     }
 }
+
+/* ==========================================================================
+   FORMULÁRIO DO BOTÃO DE WHATSAPP (modal mobile-first)
+   ========================================================================== */
+body.lead-open { overflow: hidden; }
+.lead-modal[hidden] { display: none; }
+.lead-modal { position: fixed; inset: 0; z-index: 2000; display: flex; align-items: flex-end; justify-content: center; }
+.lead-backdrop { position: absolute; inset: 0; background: rgba(30, 27, 24, 0.55); }
+.lead-card {
+    position: relative; width: 100%; max-height: 92vh; overflow-y: auto;
+    background: var(--bg-primary); padding: 2rem 1.5rem 1.6rem;
+    border-top: 2px solid var(--color-gold); box-shadow: 0 -20px 50px rgba(41, 37, 36, 0.25);
+}
+.lead-close { position: absolute; top: 0.6rem; right: 0.9rem; background: none; border: 0; font-size: 2rem; line-height: 1; color: var(--text-secondary); cursor: pointer; padding: 0.3rem 0.6rem; }
+.lead-title { font-family: var(--font-serif); font-size: 1.9rem; font-weight: 400; color: var(--text-primary); margin: 0.4rem 0 0.4rem; line-height: 1.15; }
+.lead-sub { color: var(--text-secondary); font-size: 0.95rem; margin: 0 0 1.2rem; }
+.lead-label { display: block; font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-secondary); margin: 0.9rem 0 0.35rem; }
+.lead-input { width: 100%; box-sizing: border-box; font: inherit; font-size: 1rem; padding: 0.85rem 0.9rem; border: 1px solid var(--border-color); background: #fff; color: var(--text-primary); border-radius: 0; }
+.lead-input:focus { outline: 2px solid var(--color-gold); outline-offset: 1px; border-color: var(--color-gold); }
+.lead-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.lead-error { color: #9b2c2c; font-size: 0.9rem; margin: 0.8rem 0 0; }
+.lead-submit { width: 100%; margin-top: 1.3rem; text-align: center; cursor: pointer; }
+.lead-submit[disabled] { opacity: 0.7; cursor: wait; }
+.lead-lgpd { font-size: 0.78rem; color: var(--text-secondary); line-height: 1.5; margin: 1rem 0 0; }
+.lead-lgpd a { color: var(--color-gold-hover); text-decoration: underline; }
+@media (min-width: 640px) {
+    .lead-modal { align-items: center; }
+    .lead-card { width: 460px; border-top: 0; border: 1px solid var(--border-color); padding: 2.2rem 2.2rem 1.8rem; }
+}

@@ -263,9 +263,11 @@ document.addEventListener('DOMContentLoaded', () => {
             ) {
                 link.setAttribute('href', `${href}?${utmQuery}`);
             }
-            link.addEventListener('click', () => {
+            link.addEventListener('click', (ev) => {
                 pushSiteEvent('whatsapp_click');
                 pushSiteEvent('cta_click');
+                ev.preventDefault();
+                openLeadModal(link);
             });
         } else if (href.startsWith('tel:')) {
             link.addEventListener('click', () => {
@@ -287,5 +289,166 @@ document.addEventListener('DOMContentLoaded', () => {
             pushSiteEvent('scroll_75');
         }
     }, { passive: true });
+
+
+    /* ==========================================================================
+       7. FORMULÁRIO DO BOTÃO DE WHATSAPP (nome + WhatsApp -> CRM -> wa.me)
+       ========================================================================== */
+    const WA_NUMBER = '5541997517055';
+    const SUBJECTS = {
+        '/coroa-dentaria-e-reabilitacao-oral-curitiba': ['Coroa dentária e reabilitação oral', 'saber mais sobre coroa dentária e reabilitação oral'],
+        '/oclusao-e-funcao-oral-curitiba': ['Oclusão e função oral', 'saber mais sobre avaliação de oclusão e função oral'],
+        '/harmonizacao-facial-odontologica-curitiba': ['Harmonização facial', 'saber mais sobre harmonização facial'],
+        '/saude-bucal-integrativa-e-prevencao-curitiba': ['Saúde bucal e prevenção', 'saber mais sobre saúde bucal e prevenção'],
+        '/consulta-odontologica-jardim-das-americas-curitiba-contato': ['Consulta avaliativa', 'agendar uma consulta avaliativa']
+    };
+    const DEFAULT_SUBJECT = ['Consulta avaliativa', 'agendar uma consulta avaliativa'];
+
+    // Origem de entrada (primeiro referer externo da sessão), sem cookies.
+    try {
+        if (!sessionStorage.getItem('siteReferer') && document.referrer && !document.referrer.includes(location.host)) {
+            sessionStorage.setItem('siteReferer', document.referrer.slice(0, 300));
+        }
+    } catch (e) {}
+
+    const normalizePhone = (raw) => {
+        let d = String(raw || '').replace(/\D/g, '');
+        d = d.replace(/^0+/, '');
+        if (d.length > 11 && d.startsWith('55')) d = d.slice(2);
+        if (d.length === 8 || d.length === 9) d = '41' + d;
+        if (!(d.length === 10 || d.length === 11)) return null;
+        const ddd = Number(d.slice(0, 2));
+        if (ddd < 11 || ddd > 99) return null;
+        if (d.length === 11 && d[2] !== '9') return null;
+        return d;
+    };
+
+    let leadModal = null;
+    let leadLastFocus = null;
+
+    const closeLeadModal = () => {
+        if (!leadModal) return;
+        leadModal.hidden = true;
+        document.body.classList.remove('lead-open');
+        if (leadLastFocus && leadLastFocus.focus) leadLastFocus.focus();
+    };
+
+    const onLeadSubmit = async (e) => {
+        e.preventDefault();
+        const form = e.target;
+        const err = leadModal.querySelector('#lead-error');
+        const btn = leadModal.querySelector('#lead-submit');
+        const nome = form.nome.value.replace(/\s+/g, ' ').trim();
+        const digits = normalizePhone(form.telefone.value);
+        err.hidden = true;
+        if (nome.length < 2) {
+            err.textContent = 'Informe seu nome.';
+            err.hidden = false;
+            form.nome.focus();
+            return;
+        }
+        if (!digits) {
+            err.textContent = 'Informe um WhatsApp válido com DDD (ex.: 41 99999-9999).';
+            err.hidden = false;
+            form.telefone.focus();
+            return;
+        }
+        btn.disabled = true;
+        btn.textContent = 'Enviando...';
+        const assunto = leadModal.dataset.assunto || DEFAULT_SUBJECT[0];
+        const frase = leadModal.dataset.frase || DEFAULT_SUBJECT[1];
+        let referer = null;
+        try { referer = sessionStorage.getItem('siteReferer'); } catch (x) {}
+        const payload = {
+            nome: nome,
+            telefone: '+55' + digits,
+            pagina_origem: window.location.pathname,
+            assunto: assunto,
+            utm_source: activeUtms.utm_source || null,
+            utm_medium: activeUtms.utm_medium || null,
+            utm_campaign: activeUtms.utm_campaign || null,
+            referer: referer,
+            website: form.website.value
+        };
+        let saved = false;
+        try {
+            const res = await fetch('/api/lead', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+                credentials: 'same-origin'
+            });
+            saved = res.ok;
+        } catch (x) {
+            saved = false;
+        }
+        if (saved) {
+            // Evento sem dado pessoal, só depois de o CRM confirmar o recebimento.
+            window.dataLayer.push({ event: 'generate_lead', lead_source: 'site_whatsapp', lead_subject: assunto, ...activeUtms });
+        }
+        const text = 'Olá, Dra. Milena! Sou ' + nome + ' e gostaria de ' + frase + '.';
+        // Mesmo se o CRM estiver fora do ar, o paciente não fica sem atendimento.
+        window.location.href = 'https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(text);
+    };
+
+    const buildLeadModal = () => {
+        const wrap = document.createElement('div');
+        wrap.className = 'lead-modal';
+        wrap.id = 'lead-modal';
+        wrap.setAttribute('role', 'dialog');
+        wrap.setAttribute('aria-modal', 'true');
+        wrap.setAttribute('aria-labelledby', 'lead-title');
+        wrap.hidden = true;
+        wrap.innerHTML =
+            '<div class="lead-backdrop" data-lead-close></div>' +
+            '<div class="lead-card">' +
+            '<button type="button" class="lead-close" aria-label="Fechar" data-lead-close>&times;</button>' +
+            '<span class="section-tag">Atendimento</span>' +
+            '<h2 id="lead-title" class="lead-title">Falar com a Dra. Milena pelo WhatsApp</h2>' +
+            '<p class="lead-sub">Informe seu nome e WhatsApp para continuarmos a conversa.</p>' +
+            '<form id="lead-form" novalidate>' +
+            '<label class="lead-label" for="lead-nome">Nome</label>' +
+            '<input class="lead-input" id="lead-nome" name="nome" type="text" autocomplete="name" maxlength="80" required>' +
+            '<label class="lead-label" for="lead-tel">WhatsApp com DDD</label>' +
+            '<input class="lead-input" id="lead-tel" name="telefone" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="(41) 99999-9999" maxlength="20" required>' +
+            '<div class="lead-hp" aria-hidden="true"><label>Não preencher<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>' +
+            '<p class="lead-error" id="lead-error" role="alert" hidden></p>' +
+            '<button type="submit" class="btn btn-primary lead-submit" id="lead-submit">Continuar no WhatsApp</button>' +
+            '<p class="lead-lgpd">Usamos seu nome e telefone apenas para retornar o contato e agendar sua avaliação. Saiba mais na <a href="/politica-de-privacidade-lgpd" target="_blank" rel="noopener">Política de Privacidade</a>.</p>' +
+            '</form>' +
+            '</div>';
+        document.body.appendChild(wrap);
+        wrap.addEventListener('click', (e) => {
+            if (e.target && e.target.hasAttribute && e.target.hasAttribute('data-lead-close')) closeLeadModal();
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && leadModal && !leadModal.hidden) closeLeadModal();
+        });
+        wrap.querySelector('#lead-form').addEventListener('submit', onLeadSubmit);
+        return wrap;
+    };
+
+    const openLeadModal = (link) => {
+        if (!leadModal) leadModal = buildLeadModal();
+        const path = window.location.pathname.replace(/\/+$/, '') || '/';
+        const preset = (link && link.dataset && link.dataset.assunto)
+            ? [link.dataset.assunto, link.dataset.assuntoFrase || ('falar sobre ' + link.dataset.assunto.toLowerCase())]
+            : (SUBJECTS[path] || DEFAULT_SUBJECT);
+        leadModal.dataset.assunto = preset[0];
+        leadModal.dataset.frase = preset[1];
+        leadLastFocus = document.activeElement;
+        leadModal.querySelector('#lead-error').hidden = true;
+        const btn = leadModal.querySelector('#lead-submit');
+        btn.disabled = false;
+        btn.textContent = 'Continuar no WhatsApp';
+        leadModal.hidden = false;
+        document.body.classList.add('lead-open');
+        setTimeout(() => { const f = leadModal.querySelector('#lead-nome'); if (f) f.focus(); }, 50);
+    };
+
+    window.__openLeadModal = openLeadModal;
+    if (document.body && document.body.hasAttribute('data-lead-autoopen')) {
+        openLeadModal(null);
+    }
 
 });
