@@ -4,3 +4,5 @@ wrangler.jsonc
 .gemini
 .gitignore
 .assetsignore
+.wrangler
+.assetsignore
